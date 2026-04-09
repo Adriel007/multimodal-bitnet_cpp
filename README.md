@@ -1,6 +1,6 @@
-# Hybrid Multimodal Architecture for bitnet.cpp
+# Arquitetura Hibrida Multimodal para bitnet.cpp
 
-> Implementação de referência de uma arquitetura híbrida multimodal em torno do framework `bitnet.cpp` (Microsoft), combinando encoders especialistas em alta precisão com um núcleo de linguagem ternário `{-1, 0, +1}`. Estruturada como pipeline de pesquisa reproduzível para Google Colab.
+> Implementação de referência e especificação arquitetural de uma arquitetura híbrida multimodal em torno do framework `bitnet.cpp` (Microsoft), combinando encoders especialistas em alta precisão com um núcleo de linguagem ternário `{-1, 0, +1}`. Estruturada como pipeline de pesquisa reproduzível para Google Colab. As Fases 0–1 foram validadas em T4; as Fases 2–3 requerem L4/A100 e ainda aguardam execução por limitação de acesso a compute. Se você tem acesso a hardware ou créditos de nuvem e achou este projeto interessante, contribuições são muito bem-vindas.
 
 ---
 
@@ -8,10 +8,10 @@
 
 O projeto organiza-se em dois componentes que se complementam:
 
-| Componente | Localização | Papel |
-|---|---|---|
-| **Biblioteca de módulos** | `utils/` | Código Python reutilizável, importável, documentado com docstrings NumPy e type hints |
-| **Notebooks de pipeline** | `notebooks/` | Artefatos executáveis por fase, autocontidos, prontos para Colab |
+| Componente                       | Localização  | Papel                                                                                    |
+| -------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| **Biblioteca de módulos** | `utils/`     | Código Python reutilizável, importável, documentado com docstrings NumPy e type hints |
+| **Notebooks de pipeline**  | `notebooks/` | Artefatos executáveis por fase, autocontidos, prontos para Colab                        |
 
 A separação é intencional: os `utils/` são a **camada de abstração estável**, os notebooks são o **protocolo de experimento executável**. Os notebooks podem operar de forma autocontida (inline) ou importar os `utils/` quando o projeto estiver montado no Drive.
 
@@ -77,12 +77,12 @@ projected = connector(encoder_output)   # (B, seq, 2048)
 
 `HybridLoss` — agregador configurável das 5 funções de perda da especificação (Seção 6):
 
-| Componente | Função |
-|---|---|
-| `language` | Cross-entropy autoregressiva |
-| `distill` | KL divergence logits teacher→student |
-| `align` | Cosine similarity embeddings encoder/connector |
-| `task` | Classificação, regressão ou ação (plug-in) |
+| Componente    | Função                                                |
+| ------------- | ------------------------------------------------------- |
+| `language`  | Cross-entropy autoregressiva                            |
+| `distill`   | KL divergence logits teacher→student                   |
+| `align`     | Cosine similarity embeddings encoder/connector          |
+| `task`      | Classificação, regressão ou ação (plug-in)         |
 | `stability` | Regularização de outliers de ativação (BitNet a4.8) |
 
 ```python
@@ -174,25 +174,25 @@ Célula N   — Code:     Salvamento de artefatos no Drive
 Célula fim — Markdown: Conclusões e próximos passos
 ```
 
-| Notebook | Fase | Componentes treináveis | Loss ativa |
-|---|---|---|---|
-| `00_baseline_teacher` | 0 | Nenhum (só avaliação) | — |
-| `01_connector_pretraining` | 1 | Conector MLP | Language CE |
-| `02_multimodal_alignment` | 2 | Conector + top-N blocos do backbone | Language + Distillation KL + Alignment |
-| `03_ternary_transition` | 3 | Backbone completo (QAT) | Language CE |
-| `04_export_deploy` | 4 | Nenhum (congelado) | — (benchmarks) |
+| Notebook                     | Fase | Componentes treináveis             | Loss ativa                             |
+| ---------------------------- | ---- | ----------------------------------- | -------------------------------------- |
+| `00_baseline_teacher`      | 0    | Nenhum (só avaliação)            | —                                     |
+| `01_connector_pretraining` | 1    | Conector MLP                        | Language CE                            |
+| `02_multimodal_alignment`  | 2    | Conector + top-N blocos do backbone | Language + Distillation KL + Alignment |
+| `03_ternary_transition`    | 3    | Backbone completo (QAT)             | Language CE                            |
+| `04_export_deploy`         | 4    | Nenhum (congelado)                  | — (benchmarks)                        |
 
 ---
 
 ## Política de Precisão
 
-| Componente | Precisão | Justificativa |
-|---|---|---|
-| Encoders especialistas | FP16/BF16 | Preservar fidelidade perceptual |
-| Connector MLP | BF16 | Alta precisão no alinhamento cross-modal |
-| Backbone (BitNet) | Ternário `{-1,0,+1}` | Eficiência de inferência extrema |
-| Ativações do backbone | INT8 (baseline), INT4 (avançado) | Balancear custo e outlier sensitivity |
-| Cabeças de tarefa | FP16/BF16 | Sensibilidade numérica na saída |
+| Componente              | Precisão                         | Justificativa                             |
+| ----------------------- | --------------------------------- | ----------------------------------------- |
+| Encoders especialistas  | FP16/BF16                         | Preservar fidelidade perceptual           |
+| Connector MLP           | BF16                              | Alta precisão no alinhamento cross-modal |
+| Backbone (BitNet)       | Ternário `{-1,0,+1}`           | Eficiência de inferência extrema        |
+| Ativações do backbone | INT8 (baseline), INT4 (avançado) | Balancear custo e outlier sensitivity     |
+| Cabeças de tarefa      | FP16/BF16                         | Sensibilidade numérica na saída         |
 
 ---
 
@@ -225,13 +225,13 @@ Célula fim — Markdown: Conclusões e próximos passos
 
 ## Requisitos
 
-| Recurso | Mínimo | Recomendado |
-|---|---|---|
-| GPU | T4 (Colab Free) | L4 / A100 80 GB |
-| Python | 3.10+ | 3.11 |
-| PyTorch | 2.x | 2.3+ |
-| RAM (CPU) | 12 GB | 32 GB |
-| Armazenamento Drive | 10 GB | 50 GB |
+| Recurso             | Mínimo         | Recomendado     |
+| ------------------- | --------------- | --------------- |
+| GPU                 | T4 (Colab Free) | L4 / A100 80 GB |
+| Python              | 3.10+           | 3.11            |
+| PyTorch             | 2.x             | 2.3+            |
+| RAM (CPU)           | 12 GB           | 32 GB           |
+| Armazenamento Drive | 10 GB           | 50 GB           |
 
 > **Fases 0 e 1** executam em T4. **Fases 2 e 3** (distilação + QAT de backbone completo) requerem L4 ou A100 para escala de produção. **Fase 4** (benchmarks) é limitada pelo hardware disponível.
 
