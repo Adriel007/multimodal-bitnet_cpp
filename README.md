@@ -6,7 +6,7 @@
 
 ## Visão Geral
 
-O projeto segue a especificação técnica completa em [`docs/architecture-spec.md`](docs/architecture-spec.md) e organiza-se em dois componentes que se complementam:
+O projeto organiza-se em dois componentes que se complementam:
 
 | Componente | Localização | Papel |
 |---|---|---|
@@ -21,9 +21,6 @@ A separação é intencional: os `utils/` são a **camada de abstração estáve
 
 ```
 multimodal-ternary-llm/
-│
-├── docs/
-│   └── architecture-spec.md        # Especificação técnica completa (fonte da verdade)
 │
 ├── notebooks/                       # Pipeline de implementação — 1 notebook por fase
 │   ├── 00_baseline_teacher.ipynb   # Fase 0 — Teacher FP16/BF16, interfaces, critérios de aceite
